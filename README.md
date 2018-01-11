@@ -4,6 +4,13 @@
 
 Docker image with Python 2.7, Chrome, Firefox, and their respective webdrivers.
 
+### Versions
+
+* Chrome: v63 stable
+* Chromedriver: v2.34
+* Firefox: v57
+* Geckodriver: v0.19.1
+
 ### Usage
 
 ```
