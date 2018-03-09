@@ -3,12 +3,12 @@ LABEL authors="Alex Paul,John Nolette <john@neetgroup.net>"
 
 # LIBS
 RUN apt-get update -qqy && apt-get install -qqy -y bzip2 \
-    zlib1g-dev libopenjpeg-dev libjpeg-dev xvfb unzip
+    zlib1g-dev libopenjpeg-dev libjpeg-dev unzip
 
 # FIREFOX BROWSER
-ENV FIREFOX_VERSION 57.0
-RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-    && wget -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
+ENV FIREFOX_VERSION 58.0
+RUN echo "Using Firefox version: "$FIREFOX_VERSION \
+    && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
     && rm -rf /opt/firefox \
     && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
     && rm /tmp/firefox.tar.bz2 \
@@ -28,16 +28,16 @@ RUN GK_VERSION=$(if [ ${GECKODRIVER_VERSION:-latest} = "latest" ]; then echo $(w
     && ln -fs /opt/geckodriver-$GK_VERSION /usr/bin/geckodriver
 
 # CHROME BROWSER
-ARG CHROME_VERSION="google-chrome-stable=63.0.3239.132-1"
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+ARG CHROME_VERSION="google-chrome-stable=65.0.3325.146-1"
+RUN echo "Using Chrome version: "$CHROME_VERSION \
+    && wget --no-verbose -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update -qqy \
     && apt-get -qqy install ${CHROME_VERSION:-google-chrome-stable} \
-    && rm /etc/apt/sources.list.d/google-chrome.list \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    && rm /etc/apt/sources.list.d/google-chrome.list
 
 # CHROME DRIVER
-ENV CHROME_DRIVER_VERSION 2.34
+ENV CHROME_DRIVER_VERSION 2.35
 RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
     && echo "Using chromedriver version: "$CD_VERSION \
     && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CD_VERSION/chromedriver_linux64.zip \
@@ -47,3 +47,5 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
     && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CD_VERSION \
     && chmod 755 /opt/selenium/chromedriver-$CD_VERSION \
     && ln -fs /opt/selenium/chromedriver-$CD_VERSION /usr/bin/chromedriver
+
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
