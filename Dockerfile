@@ -6,7 +6,7 @@ RUN apt-get update -qqy && apt-get install -qqy -y bzip2 \
     zlib1g-dev libopenjpeg-dev libjpeg-dev unzip
 
 # FIREFOX BROWSER
-ENV FIREFOX_VERSION 58.0
+ENV FIREFOX_VERSION 57.0
 RUN echo "Using Firefox version: "$FIREFOX_VERSION \
     && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
     && rm -rf /opt/firefox \
