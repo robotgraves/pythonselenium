@@ -3,12 +3,12 @@ LABEL authors="Alex Paul,John Nolette <john@neetgroup.net>"
 
 # LIBS
 RUN apt-get update -qqy && apt-get install -qqy -y bzip2 \
-    zlib1g-dev libopenjpeg-dev libjpeg-dev unzip
+    zlib1g-dev libopenjpeg-dev libjpeg-dev xvfb unzip
 
 # FIREFOX BROWSER
-ENV FIREFOX_VERSION 57.0
-RUN echo "Using Firefox version: "$FIREFOX_VERSION \
-    && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
+ENV FIREFOX_VERSION 58.0.2
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && wget -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
     && rm -rf /opt/firefox \
     && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
     && rm /tmp/firefox.tar.bz2 \
@@ -18,7 +18,7 @@ RUN echo "Using Firefox version: "$FIREFOX_VERSION \
 # GECKODRIVER
 ENV GECKODRIVER_VERSION 0.19.1
 RUN GK_VERSION=$(if [ ${GECKODRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- "https://api.github.com/repos/mozilla/geckodriver/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([0-9.]+)".*/\1/'); else echo $GECKODRIVER_VERSION; fi) \
-    && echo "Using GeckoDriver version: "$GK_VERSION \
+    && echo "Using GeckoDriver version:" $GK_VERSION \
     && wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v$GK_VERSION/geckodriver-v$GK_VERSION-linux64.tar.gz \
     && rm -rf /opt/geckodriver \
     && tar -C /opt -zxf /tmp/geckodriver.tar.gz \
@@ -29,12 +29,12 @@ RUN GK_VERSION=$(if [ ${GECKODRIVER_VERSION:-latest} = "latest" ]; then echo $(w
 
 # CHROME BROWSER
 ARG CHROME_VERSION="google-chrome-stable=65.0.3325.146-1"
-RUN echo "Using Chrome version: "$CHROME_VERSION \
-    && wget --no-verbose -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update -qqy \
     && apt-get -qqy install ${CHROME_VERSION:-google-chrome-stable} \
-    && rm /etc/apt/sources.list.d/google-chrome.list
+    && rm /etc/apt/sources.list.d/google-chrome.list \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # CHROME DRIVER
 ENV CHROME_DRIVER_VERSION 2.35
@@ -49,3 +49,5 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
     && ln -fs /opt/selenium/chromedriver-$CD_VERSION /usr/bin/chromedriver
 
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+RUN ls /usr/bin | grep firefox
