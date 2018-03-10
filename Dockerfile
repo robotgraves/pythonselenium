@@ -47,7 +47,3 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
     && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CD_VERSION \
     && chmod 755 /opt/selenium/chromedriver-$CD_VERSION \
     && ln -fs /opt/selenium/chromedriver-$CD_VERSION /usr/bin/chromedriver
-
-RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-
-RUN ls /usr/bin | grep firefox
