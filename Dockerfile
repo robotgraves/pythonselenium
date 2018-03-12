@@ -2,6 +2,7 @@ FROM ubuntu:16.04
 LABEL authors="Alex Paul,John Nolette <john@neetgroup.net>"
 
 # http://bugs.python.org/issue19846
+
 ENV LANG C.UTF-8
 
 # APT-GET REPOSITORIES
